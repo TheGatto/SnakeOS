@@ -1,7 +1,5 @@
 from Files.sys.kernel.module import *
 
-
-
 def createDir(directory:str):
     try:
         os.mkdir(directory)
