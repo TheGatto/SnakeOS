@@ -1,5 +1,5 @@
-from Files.sys.kernel.module import *
 
+from Files.sys.kernel.module import *
 
 #Test
 def createDir(directory:str):
@@ -13,21 +13,11 @@ class Boot:
         createDir(selectedDir+'/Files')
         dir = selectedDir+'/Files'
         createDir(dir+'/prgmdir')
-        try:
-            with open(dir+'/prgmdir/'+'__init__.py','x') as f:
-                f.close()
-        except:
-            pass
         createDir(dir+'/User')
         createDir(dir+'/sys')
         dir += '/sys'
         createDir(dir+'/snkAssets')
         createDir(dir+'/kernel')
-        try:
-            with open(dir+'/kernel/'+'__init__.py','x') as f:
-                f.close()
-        except:
-            pass
         dir = dir.replace('/sys','')
         dir += '/User/'
         try:
@@ -50,10 +40,12 @@ def crash():
 
 
 def returnTo(data:str, location:str = 'TER'):
-    if location == 'TER': #TODO: add other locations
+    if location == 'TER':
         print(data)
-    if location == 'MER':
-        ...
+    elif location == 'CLIP':
+        pyperclip.copy(data)
+    else:
+        print("Invalid location")
 
 def getIP(auth:str):
     if len(auth.split('›')) > 2:
@@ -118,7 +110,6 @@ def encryptWord(text):
                 count-=2
 
     return code
-
 
 
 
@@ -241,8 +232,8 @@ def startupProtocol(version:float,professional:bool,shortCommands:bool):
     d = json.load(open('Files/User/Shortcuts.snk'))
     json.dump(d, open("/Users/home/PycharmProjects/SnakeOSFinal/Files/sys/snkAssets/snkShcut.txt", 'w'))
     sleep(0.5)
-    #os.system(f"say {'Snake OS v'+str(version)}")
-    print('Booting version '+str(version)+'...')
+    #os.system(f"say {'Snake OS v'+str(__version__)}")
+    print('Booting __version__ '+str(version)+'...')
     sys.path.append('/Files/prgmdir')
     global selectedDir
     global shCommands
@@ -331,7 +322,8 @@ def register(key):
 def mainLoop(key:int):
     global selectedDir, shCommands
     commands = ('sdir', 'ip', 'user', 'kernel', 'help', 'sd','clear','ldir','udir','crash')
-    commandsArg = ('cdir', 'echo', 'run', 'qkrun','open')
+    commandsArg = ('cdir', 'echo', 'run', 'qkrun','open', 'touch')
+    commandsArg2 = ('return',)
     enteredInput = input(">>>")
     if len(enteredInput) < 2 :
         return
@@ -359,7 +351,7 @@ def mainLoop(key:int):
             if command == 'user':
                 print('Not Implemented')
             if command == 'help':
-                print(commands+commandsArg)
+                print(commands+commandsArg+commandsArg2)
             if command == 'kernel':
                 print(getKernel())
             if command == 'clear':
@@ -410,11 +402,26 @@ def mainLoop(key:int):
                     openFile(selectedDir+'/'+code[1])
                 else:
                     print("No file named '",code[1],"' in ",selectedDir + '/' )
+            if command == 'touch':
+                try:
+                    with open(code[1],'x') as file:
+                        pass
+                except:
+                    print("File already exists.")
         else:
             if arguments >1:
                 print("Unexpected arguments (One Expected)")
             else:
                 print("Argument Expected (One Expected)")
+    elif command in commandsArg2:
+        if arguments == 2:
+            if command == 'return':
+                returnTo(code[1],code[2])
+        else:
+            if arguments > 2:
+                print("Unexpected arguments (Two Expected)")
+            else:
+                print("Argument Expected (Two Expected)")
     else:
         if shCommands:
             print("Command '"+ command + "' does not exist")
